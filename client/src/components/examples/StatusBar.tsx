@@ -6,8 +6,9 @@ export default function StatusBarExample() {
       cameraActive={true}
       audioActive={true}
       fps={30}
-      wordsRecognized={42}
+      lettersRecognized={42}
       sessionDuration={185}
+      currentLetter="A"
     />
   );
 }

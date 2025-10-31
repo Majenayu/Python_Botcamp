@@ -6,16 +6,18 @@ interface StatusBarProps {
   cameraActive: boolean;
   audioActive: boolean;
   fps: number;
-  wordsRecognized: number;
+  lettersRecognized: number;
   sessionDuration: number;
+  currentLetter?: string;
 }
 
 export default function StatusBar({ 
   cameraActive, 
   audioActive, 
   fps, 
-  wordsRecognized,
-  sessionDuration 
+  lettersRecognized,
+  sessionDuration,
+  currentLetter
 }: StatusBarProps) {
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -25,7 +27,7 @@ export default function StatusBar({
 
   return (
     <Card className="p-4">
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
         <div className="flex items-center gap-2">
           <Camera className={`w-4 h-4 ${cameraActive ? 'text-green-500' : 'text-muted-foreground'}`} />
           <div>
@@ -55,8 +57,8 @@ export default function StatusBar({
         </div>
 
         <div>
-          <div className="text-xs text-muted-foreground">Words</div>
-          <div className="text-sm font-medium" data-testid="text-words-count">{wordsRecognized}</div>
+          <div className="text-xs text-muted-foreground">Letters</div>
+          <div className="text-sm font-medium" data-testid="text-letters-count">{lettersRecognized}</div>
         </div>
 
         <div>
@@ -65,6 +67,15 @@ export default function StatusBar({
             {formatDuration(sessionDuration)}
           </div>
         </div>
+
+        {currentLetter && (
+          <div>
+            <div className="text-xs text-muted-foreground">Detecting</div>
+            <Badge variant="default" className="text-lg font-mono" data-testid="badge-current-letter">
+              {currentLetter}
+            </Badge>
+          </div>
+        )}
       </div>
     </Card>
   );

@@ -3,38 +3,52 @@ import VideoFeed from '@/components/VideoFeed';
 import OutputPanel from '@/components/OutputPanel';
 import ControlPanel from '@/components/ControlPanel';
 import StatusBar from '@/components/StatusBar';
+import ASLReference from '@/components/ASLReference';
 import HelpDialog from '@/components/HelpDialog';
 import ThemeToggle from '@/components/ThemeToggle';
-import { Hand } from 'lucide-react';
+import { Hand, BookOpen } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   const [isRecognizing, setIsRecognizing] = useState(false);
   const [recognizedText, setRecognizedText] = useState('');
-  const [recentWords, setRecentWords] = useState<Array<{ word: string; timestamp: number }>>([]);
-  const [autoSpeak, setAutoSpeak] = useState(true);
+  const [recentLetters, setRecentLetters] = useState<string[]>([]);
+  const [autoSpeak, setAutoSpeak] = useState(false);
   const [volume, setVolume] = useState(80);
   const [sensitivity, setSensitivity] = useState(70);
   const [language, setLanguage] = useState('en-US');
   const [fps, setFps] = useState(0);
   const [sessionDuration, setSessionDuration] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [currentLetter, setCurrentLetter] = useState<string | undefined>(undefined);
+  const [showReference, setShowReference] = useState(true);
 
-  const mockWords = ['Hello', 'World', 'How', 'Are', 'You', 'Today', 'Nice', 'Meet', 'Thank', 'Please'];
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isRecognizing) {
       setFps(30);
       interval = setInterval(() => {
-        const randomWord = mockWords[Math.floor(Math.random() * mockWords.length)];
-        setRecognizedText(prev => prev ? `${prev} ${randomWord}` : randomWord);
-        setRecentWords(prev => [...prev.slice(-4), { word: randomWord, timestamp: Date.now() }]);
-      }, 2000);
+        const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+        setCurrentLetter(randomLetter);
+        setRecognizedText(prev => prev + randomLetter);
+        setRecentLetters(prev => [...prev.slice(-9), randomLetter]);
+        
+        if (autoSpeak && 'speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(randomLetter);
+          utterance.lang = language;
+          utterance.volume = volume / 100;
+          utterance.rate = 1.5;
+          window.speechSynthesis.speak(utterance);
+        }
+      }, 1500);
     } else {
       setFps(0);
+      setCurrentLetter(undefined);
     }
     return () => clearInterval(interval);
-  }, [isRecognizing]);
+  }, [isRecognizing, autoSpeak, language, volume]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -48,8 +62,14 @@ export default function Home() {
 
   const handleClear = () => {
     setRecognizedText('');
-    setRecentWords([]);
+    setRecentLetters([]);
     console.log('Clear clicked');
+  };
+
+  const handleBackspace = () => {
+    setRecognizedText(prev => prev.slice(0, -1));
+    setRecentLetters(prev => prev.slice(0, -1));
+    console.log('Backspace clicked');
   };
 
   const handleSpeak = () => {
@@ -83,10 +103,19 @@ export default function Home() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold">SignSpeak</h1>
-                <p className="text-sm text-muted-foreground">Real-time sign language recognition</p>
+                <p className="text-sm text-muted-foreground">Letter-by-letter ASL recognition</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowReference(!showReference)}
+                data-testid="button-toggle-reference"
+              >
+                <BookOpen className="w-4 h-4 mr-2" />
+                {showReference ? 'Hide' : 'Show'} Reference
+              </Button>
               <HelpDialog />
               <ThemeToggle />
             </div>
@@ -100,8 +129,9 @@ export default function Home() {
             cameraActive={true}
             audioActive={autoSpeak}
             fps={fps}
-            wordsRecognized={recentWords.length}
+            lettersRecognized={recentLetters.length}
             sessionDuration={sessionDuration}
+            currentLetter={currentLetter}
           />
 
           <div className="grid lg:grid-cols-3 gap-6">
@@ -110,6 +140,10 @@ export default function Home() {
                 isRecognizing={isRecognizing}
                 onHandDetected={(landmarks) => console.log('Hand detected:', landmarks)}
               />
+              
+              {showReference && (
+                <ASLReference onClose={() => setShowReference(false)} />
+              )}
               
               <div className="lg:hidden">
                 <ControlPanel
@@ -146,9 +180,10 @@ export default function Home() {
               <div className="h-[500px]">
                 <OutputPanel
                   recognizedText={recognizedText}
-                  recentWords={recentWords}
+                  recentLetters={recentLetters}
                   onClear={handleClear}
                   onSpeak={handleSpeak}
+                  onBackspace={handleBackspace}
                   isSpeaking={isSpeaking}
                 />
               </div>

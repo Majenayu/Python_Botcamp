@@ -1,20 +1,15 @@
 import OutputPanel from '../OutputPanel';
 
 export default function OutputPanelExample() {
-  const mockWords = [
-    { word: 'Hello', timestamp: Date.now() - 5000 },
-    { word: 'World', timestamp: Date.now() - 3000 },
-    { word: 'How', timestamp: Date.now() - 2000 },
-    { word: 'Are', timestamp: Date.now() - 1000 },
-    { word: 'You', timestamp: Date.now() }
-  ];
+  const mockLetters = ['H', 'E', 'L', 'L', 'O'];
 
   return (
     <OutputPanel
-      recognizedText="Hello World How Are You"
-      recentWords={mockWords}
+      recognizedText="HELLO"
+      recentLetters={mockLetters}
       onClear={() => console.log('Clear clicked')}
       onSpeak={() => console.log('Speak clicked')}
+      onBackspace={() => console.log('Backspace clicked')}
       isSpeaking={false}
     />
   );

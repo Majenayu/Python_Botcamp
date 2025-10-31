@@ -22,7 +22,7 @@ export default function HelpDialog() {
         <DialogHeader>
           <DialogTitle>How to Use SignSpeak</DialogTitle>
           <DialogDescription>
-            Learn how to get the best results from sign language recognition
+            Learn how to get the best results from ASL letter recognition
           </DialogDescription>
         </DialogHeader>
         
@@ -38,19 +38,21 @@ export default function HelpDialog() {
                 <li>• Position yourself 1-2 feet from camera</li>
                 <li>• Keep hands visible in the frame</li>
                 <li>• Avoid busy backgrounds</li>
+                <li>• Use a plain background for better accuracy</li>
               </ul>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Hand className="w-5 h-5 text-primary" />
-                <h3 className="font-semibold">Hand Positioning</h3>
+                <h3 className="font-semibold">Forming Letters</h3>
               </div>
               <ul className="space-y-1 text-sm text-muted-foreground ml-7">
-                <li>• Form gestures clearly and deliberately</li>
-                <li>• Hold each sign for 1-2 seconds</li>
-                <li>• Avoid rapid movements between signs</li>
-                <li>• Keep fingers spread and visible</li>
+                <li>• Reference the ASL alphabet chart shown below the video</li>
+                <li>• Form each letter clearly and hold for 1-2 seconds</li>
+                <li>• Keep your hand steady while signing</li>
+                <li>• Make sure all fingers are visible and positioned correctly</li>
+                <li>• Practice letters slowly before increasing speed</li>
               </ul>
             </div>
 
@@ -60,10 +62,11 @@ export default function HelpDialog() {
                 <h3 className="font-semibold">Settings</h3>
               </div>
               <ul className="space-y-1 text-sm text-muted-foreground ml-7">
-                <li>• Adjust sensitivity if detection is too sensitive/insensitive</li>
-                <li>• Enable auto-speak to hear text as it's recognized</li>
+                <li>• Adjust sensitivity if letters are detected too quickly/slowly</li>
+                <li>• Enable auto-speak to hear each letter as it's recognized</li>
                 <li>• Choose your preferred speech language</li>
                 <li>• Control volume for speech output</li>
+                <li>• Use backspace to correct mistakes</li>
               </ul>
             </div>
 
@@ -73,10 +76,21 @@ export default function HelpDialog() {
                 <h3 className="font-semibold">Speech Output</h3>
               </div>
               <ul className="space-y-1 text-sm text-muted-foreground ml-7">
-                <li>• Use the Speak button to hear recognized text</li>
-                <li>• Auto-speak will read text automatically</li>
+                <li>• Auto-speak will pronounce each letter as detected</li>
+                <li>• Use the Speak button to hear the full text</li>
                 <li>• Adjust volume in settings panel</li>
                 <li>• Multiple languages supported</li>
+              </ul>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="font-semibold">Building Words & Sentences</h3>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li>• Sign each letter one at a time</li>
+                <li>• Letters will appear in order to form words</li>
+                <li>• Use the backspace button to delete the last letter</li>
+                <li>• Use the clear button to start over</li>
+                <li>• Recent letters are shown at the bottom for reference</li>
               </ul>
             </div>
 
@@ -84,9 +98,10 @@ export default function HelpDialog() {
               <h3 className="font-semibold">Troubleshooting</h3>
               <ul className="space-y-1 text-sm text-muted-foreground">
                 <li>• <strong>No detection?</strong> Check camera permissions and lighting</li>
-                <li>• <strong>Inaccurate results?</strong> Adjust sensitivity and slow down gestures</li>
+                <li>• <strong>Wrong letters?</strong> Form signs more clearly and hold steady</li>
+                <li>• <strong>Too fast?</strong> Reduce sensitivity in settings</li>
+                <li>• <strong>Too slow?</strong> Increase sensitivity in settings</li>
                 <li>• <strong>No speech?</strong> Check volume settings and browser permissions</li>
-                <li>• <strong>Low FPS?</strong> Close other apps using camera/CPU</li>
               </ul>
             </div>
           </div>
