@@ -23,42 +23,35 @@ export default function Home() {
   const [currentLetter, setCurrentLetter] = useState<string | undefined>(undefined);
   const [showReference, setShowReference] = useState(true);
 
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isRecognizing) {
       setFps(30);
       interval = setInterval(() => {
-        const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
-        setCurrentLetter(randomLetter);
-        setRecognizedText(prev => prev + randomLetter);
-        setRecentLetters(prev => [...prev.slice(-9), randomLetter]);
-        
-        if (autoSpeak && 'speechSynthesis' in window) {
-          const utterance = new SpeechSynthesisUtterance(randomLetter);
-          utterance.lang = language;
-          utterance.volume = volume / 100;
-          utterance.rate = 1.5;
-          window.speechSynthesis.speak(utterance);
-        }
-      }, 1500);
+        setSessionDuration(prev => prev + 1);
+      }, 1000);
     } else {
       setFps(0);
       setCurrentLetter(undefined);
     }
     return () => clearInterval(interval);
-  }, [isRecognizing, autoSpeak, language, volume]);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isRecognizing) {
-      interval = setInterval(() => {
-        setSessionDuration(prev => prev + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
   }, [isRecognizing]);
+
+  const handleLetterDetected = (letter: string) => {
+    setCurrentLetter(letter);
+    setRecognizedText(prev => prev + letter);
+    setRecentLetters(prev => [...prev.slice(-9), letter]);
+    
+    if (autoSpeak && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(letter);
+      utterance.lang = language;
+      utterance.volume = volume / 100;
+      utterance.rate = 1.5;
+      window.speechSynthesis.speak(utterance);
+    }
+    
+    console.log('Letter detected:', letter);
+  };
 
   const handleClear = () => {
     setRecognizedText('');
@@ -103,7 +96,7 @@ export default function Home() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold">SignSpeak</h1>
-                <p className="text-sm text-muted-foreground">Letter-by-letter ASL recognition</p>
+                <p className="text-sm text-muted-foreground">Real-time ASL letter recognition</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -138,7 +131,7 @@ export default function Home() {
             <div className="lg:col-span-2 space-y-6">
               <VideoFeed 
                 isRecognizing={isRecognizing}
-                onHandDetected={(landmarks) => console.log('Hand detected:', landmarks)}
+                onLetterDetected={handleLetterDetected}
               />
               
               {showReference && (
