@@ -1,0 +1,220 @@
+═══════════════════════════════════════════════════════════════
+  ASL GESTURE RECOGNITION - WINDOWS SETUP GUIDE
+═══════════════════════════════════════════════════════════════
+
+This application recognizes American Sign Language (ASL) gestures 
+for all letters A-Z, plus special controls for space and corrections.
+
+────────────────────────────────────────────────────────────────
+STEP 1: INSTALL PYTHON
+────────────────────────────────────────────────────────────────
+
+1. Go to: https://www.python.org/downloads/
+2. Download Python 3.11 or newer
+3. Run the installer
+4. ✅ IMPORTANT: Check "Add Python to PATH" during installation
+5. Click "Install Now"
+
+────────────────────────────────────────────────────────────────
+STEP 2: DOWNLOAD THIS PROJECT
+────────────────────────────────────────────────────────────────
+
+Option A: If you have Git installed
+   - Open Command Prompt or PowerShell
+   - Run: git clone <repository-url>
+   - Run: cd <repository-folder>
+
+Option B: Download ZIP
+   - Download the ZIP file
+   - Extract to a folder (e.g., C:\ASL-App)
+   - Remember the folder location
+
+────────────────────────────────────────────────────────────────
+STEP 3: INSTALL REQUIRED PACKAGES
+────────────────────────────────────────────────────────────────
+
+1. Open Command Prompt or PowerShell
+   (Press Windows Key + R, type "cmd", press Enter)
+
+2. Navigate to the project folder:
+   cd C:\path\to\your\project
+
+3. Install packages (copy and paste this command):
+   pip install opencv-python mediapipe numpy flask flask-socketio python-socketio
+
+   This will install:
+   - opencv-python: Computer vision library
+   - mediapipe: Google's hand tracking AI
+   - numpy: Numerical computing
+   - flask: Web server
+   - flask-socketio: Real-time communication
+   - python-socketio: WebSocket support
+
+4. Wait for installation to complete (may take 2-5 minutes)
+
+────────────────────────────────────────────────────────────────
+STEP 4: RUN THE APPLICATION
+────────────────────────────────────────────────────────────────
+
+1. In Command Prompt/PowerShell (in project folder):
+   python app.py
+
+2. You should see:
+   * Running on http://127.0.0.1:5000
+
+3. Open your web browser (Chrome, Firefox, or Edge)
+
+4. Go to: http://localhost:5000
+
+5. The app will open! Click "Start Camera" to begin
+
+────────────────────────────────────────────────────────────────
+STEP 5: USE IN VS CODE (OPTIONAL)
+────────────────────────────────────────────────────────────────
+
+1. Install VS Code from: https://code.visualstudio.com/
+
+2. Open VS Code
+
+3. Click: File → Open Folder → Select your project folder
+
+4. Open Terminal in VS Code:
+   - Press Ctrl + ` (backtick key)
+   - Or go to: Terminal → New Terminal
+
+5. Run: python app.py
+
+6. Ctrl + Click on http://127.0.0.1:5000 link in terminal
+
+7. Browser opens automatically!
+
+────────────────────────────────────────────────────────────────
+HOW TO USE THE APP
+────────────────────────────────────────────────────────────────
+
+1. Click "Start Camera" button
+2. Allow browser to access your webcam when prompted
+3. Show ASL hand gestures to the camera
+4. Hold each gesture steady for ~1.5 seconds
+5. Letter appears in "Current Gesture" panel
+6. After holding, letter is added to "Recognized Text"
+
+SPECIAL GESTURES:
+  👋 Open Hand (all 5 fingers) = ADD SPACE
+  👍 Thumbs Up = Confirm (correct)
+  👎 Thumbs Down = Delete last letter (wrong)
+
+MANUAL CONTROLS:
+  ✓ Correct = Confirm current letter
+  ✗ Wrong = Remove last letter
+  Add Space = Add space to text
+  Clear Text = Start over
+
+────────────────────────────────────────────────────────────────
+SUPPORTED ASL GESTURES (A-Z)
+────────────────────────────────────────────────────────────────
+
+A = Closed fist, thumb on side
+B = Flat hand, fingers together (except thumb)
+C = Curved hand (C shape)
+D = Index up, thumb touching middle
+E = Fingers curled tight
+F = OK sign with thumb/index, other fingers up
+G = Index and thumb pointing sideways
+H = Index and middle together sideways
+I = Pinky up, others down
+J = Pinky extended (J motion)
+K = Index and middle in V, thumb between
+L = L shape with index and thumb
+M = Three fingers over thumb
+N = Two fingers over thumb
+O = Circle with all fingers
+P = Index and middle pointing down
+Q = Index and thumb pointing down
+R = Index and middle crossed
+S = Fist with thumb across fingers
+T = Thumb between index and middle
+U = Index and middle together up
+V = Peace sign (fingers apart)
+W = Three fingers up (index, middle, ring)
+X = Index curled in hook
+Y = Shaka sign (thumb and pinky out)
+Z = Index drawing Z
+
+────────────────────────────────────────────────────────────────
+TROUBLESHOOTING
+────────────────────────────────────────────────────────────────
+
+❌ "Python is not recognized"
+   → You didn't check "Add Python to PATH" during installation
+   → Reinstall Python and check that box
+
+❌ "pip is not recognized"
+   → Run: python -m pip install [package-name]
+
+❌ Camera not working
+   → Check if another app is using the camera (close Zoom, Teams, etc.)
+   → Check browser permissions (allow camera access)
+   → Try a different browser (Chrome works best)
+
+❌ "Address already in use" / Port 5000 error
+   → Another program is using port 5000
+   → Edit app.py, change last line to:
+     socketio.run(app, host='0.0.0.0', port=5001, debug=True)
+   → Then go to: http://localhost:5001
+
+❌ Gestures not recognized
+   → Ensure good lighting
+   → Position hand clearly in view
+   → Hold gesture steady for 1-2 seconds
+   → Try adjusting distance (arm's length works well)
+   → Use plain background
+
+❌ Slow performance
+   → Close other programs
+   → Reduce browser window size
+   → Make sure laptop is plugged in (not battery mode)
+
+────────────────────────────────────────────────────────────────
+STOPPING THE APP
+────────────────────────────────────────────────────────────────
+
+1. In Command Prompt/VS Code Terminal:
+   Press Ctrl + C
+
+2. Close the browser tab
+
+────────────────────────────────────────────────────────────────
+FILE STRUCTURE
+────────────────────────────────────────────────────────────────
+
+project/
+│
+├── app.py                    ← Main application (Python)
+├── templates/
+│   └── index.html           ← Web interface (HTML/CSS/JS)
+├── README.md                ← Detailed documentation
+├── WINDOWS_SETUP.txt        ← This file
+└── pyproject.toml           ← Python project config
+
+────────────────────────────────────────────────────────────────
+TIPS FOR BEST RESULTS
+────────────────────────────────────────────────────────────────
+
+✓ Use good lighting (face a window or lamp)
+✓ Plain background works best
+✓ Keep hand at arm's length from camera
+✓ Hold gestures steady (don't move while recognizing)
+✓ Practice gestures - recognition improves with consistency
+✓ Single hand only (one at a time)
+
+────────────────────────────────────────────────────────────────
+NEED HELP?
+────────────────────────────────────────────────────────────────
+
+Check README.md for more detailed information.
+Report issues or ask questions in the repository.
+
+═══════════════════════════════════════════════════════════════
+              Made with ❤️ for accessibility
+═══════════════════════════════════════════════════════════════

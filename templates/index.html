@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASL Gesture Recognition - A to Z</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .video-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .video-container {
+            position: relative;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+        }
+        
+        #video {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #processedFrame {
+            display: none;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 25px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .btn-start {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-start:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        
+        .btn-stop {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-stop:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+        
+        .btn-clear {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .btn-clear:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+        
+        .info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .gesture-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .gesture-label {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .gesture-value {
+            font-size: 4em;
+            font-weight: bold;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .text-display {
+            background: #f3f4f6;
+            padding: 25px;
+            border-radius: 15px;
+            flex-grow: 1;
+        }
+        
+        .text-label {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 15px;
+        }
+        
+        .text-value {
+            font-size: 1.8em;
+            color: #1f2937;
+            min-height: 100px;
+            word-wrap: break-word;
+            line-height: 1.5;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .correction-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .btn-correct {
+            background: #10b981;
+            color: white;
+            padding: 15px;
+            font-size: 1.2em;
+        }
+        
+        .btn-correct:hover {
+            background: #059669;
+        }
+        
+        .btn-wrong {
+            background: #ef4444;
+            color: white;
+            padding: 15px;
+            font-size: 1.2em;
+        }
+        
+        .btn-wrong:hover {
+            background: #dc2626;
+        }
+        
+        .btn-space {
+            background: #3b82f6;
+            color: white;
+            padding: 15px;
+            font-size: 1.2em;
+            grid-column: span 2;
+        }
+        
+        .btn-space:hover {
+            background: #2563eb;
+        }
+        
+        .status {
+            padding: 15px;
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            font-size: 1em;
+            color: #92400e;
+        }
+        
+        .instructions {
+            background: #e0e7ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .instructions h3 {
+            color: #4338ca;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            color: #4338ca;
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin: 5px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .gesture-value {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤟 ASL Gesture Recognition</h1>
+            <p class="subtitle">Real-time A-Z American Sign Language Recognition</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="video-section">
+                <div class="video-container">
+                    <video id="video" autoplay playsinline></video>
+                    <img id="processedFrame" alt="Processed frame">
+                </div>
+                
+                <div class="controls">
+                    <button class="btn-start" onclick="startCamera()">Start Camera</button>
+                    <button class="btn-stop" onclick="stopCamera()">Stop Camera</button>
+                    <button class="btn-clear" onclick="clearText()">Clear Text</button>
+                </div>
+                
+                <div class="status" id="status">
+                    Click "Start Camera" to begin gesture recognition
+                </div>
+                
+                <div class="instructions">
+                    <h3>Instructions:</h3>
+                    <ul>
+                        <li>Show ASL gestures for letters A-Z in front of the camera</li>
+                        <li>Open hand (all fingers extended) = Add SPACE</li>
+                        <li>Thumbs Up 👍 = Confirm correct letter</li>
+                        <li>Thumbs Down 👎 = Remove last letter (wrong)</li>
+                        <li>Hold gesture steady for recognition</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="gesture-display">
+                    <div class="gesture-label">Current Gesture</div>
+                    <div class="gesture-value" id="currentGesture">-</div>
+                </div>
+                
+                <div class="text-display">
+                    <div class="text-label">Recognized Text</div>
+                    <div class="text-value" id="recognizedText"></div>
+                </div>
+                
+                <div class="correction-controls">
+                    <button class="btn-correct" onclick="confirmLetter()">✓ Correct</button>
+                    <button class="btn-wrong" onclick="removeLast()">✗ Wrong</button>
+                    <button class="btn-space" onclick="addSpace()">Add Space</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const socket = io();
+        const video = document.getElementById('video');
+        const processedFrame = document.getElementById('processedFrame');
+        const currentGestureEl = document.getElementById('currentGesture');
+        const recognizedTextEl = document.getElementById('recognizedText');
+        const statusEl = document.getElementById('status');
+        
+        let stream = null;
+        let isRunning = false;
+        let currentGesture = null;
+        let recognizedText = '';
+        let lastGesture = null;
+        let gestureHoldCount = 0;
+        const HOLD_THRESHOLD = 15;
+        
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480 } 
+                });
+                video.srcObject = stream;
+                isRunning = true;
+                statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+                statusEl.style.background = '#d1fae5';
+                statusEl.style.borderColor = '#10b981';
+                statusEl.style.color = '#065f46';
+                processFrames();
+            } catch (err) {
+                statusEl.textContent = 'Error accessing camera: ' + err.message;
+                statusEl.style.background = '#fee2e2';
+                statusEl.style.borderColor = '#ef4444';
+                statusEl.style.color = '#991b1b';
+            }
+        }
+        
+        function stopCamera() {
+            isRunning = false;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            video.srcObject = null;
+            processedFrame.style.display = 'none';
+            statusEl.textContent = 'Camera stopped';
+            statusEl.style.background = '#fef3c7';
+            statusEl.style.borderColor = '#f59e0b';
+            statusEl.style.color = '#92400e';
+        }
+        
+        function processFrames() {
+            if (!isRunning) return;
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            
+            const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+            socket.emit('frame', dataURL);
+            
+            setTimeout(processFrames, 100);
+        }
+        
+        socket.on('response', (data) => {
+            if (data.frame) {
+                processedFrame.src = data.frame;
+                processedFrame.style.display = 'block';
+                video.style.display = 'none';
+            }
+            
+            if (data.gesture) {
+                currentGesture = data.gesture;
+                
+                if (currentGesture === lastGesture) {
+                    gestureHoldCount++;
+                } else {
+                    gestureHoldCount = 0;
+                    lastGesture = currentGesture;
+                }
+                
+                if (currentGesture === 'HI_SPACE' && gestureHoldCount === HOLD_THRESHOLD) {
+                    addSpace();
+                    gestureHoldCount = 0;
+                } else if (currentGesture === 'THUMBS_UP' && gestureHoldCount === HOLD_THRESHOLD) {
+                    confirmLetter();
+                    gestureHoldCount = 0;
+                } else if (currentGesture === 'THUMBS_DOWN' && gestureHoldCount === HOLD_THRESHOLD) {
+                    removeLast();
+                    gestureHoldCount = 0;
+                } else if (gestureHoldCount === HOLD_THRESHOLD && 
+                          currentGesture !== 'HI_SPACE' && 
+                          currentGesture !== 'THUMBS_UP' && 
+                          currentGesture !== 'THUMBS_DOWN') {
+                    recognizedText += currentGesture;
+                    updateDisplay();
+                    gestureHoldCount = 0;
+                }
+                
+                if (currentGesture === 'HI_SPACE') {
+                    currentGestureEl.textContent = '👋 SPACE';
+                } else if (currentGesture === 'THUMBS_UP') {
+                    currentGestureEl.textContent = '👍 OK';
+                } else if (currentGesture === 'THUMBS_DOWN') {
+                    currentGestureEl.textContent = '👎 WRONG';
+                } else {
+                    currentGestureEl.textContent = currentGesture;
+                }
+            } else {
+                currentGestureEl.textContent = '-';
+                gestureHoldCount = 0;
+                lastGesture = null;
+            }
+        });
+        
+        function confirmLetter() {
+            statusEl.textContent = '✓ Letter confirmed!';
+            statusEl.style.background = '#d1fae5';
+            statusEl.style.borderColor = '#10b981';
+            statusEl.style.color = '#065f46';
+            setTimeout(() => {
+                statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+            }, 2000);
+        }
+        
+        function removeLast() {
+            if (recognizedText.length > 0) {
+                recognizedText = recognizedText.slice(0, -1);
+                updateDisplay();
+                statusEl.textContent = '✗ Last letter removed';
+                statusEl.style.background = '#fee2e2';
+                statusEl.style.borderColor = '#ef4444';
+                statusEl.style.color = '#991b1b';
+                setTimeout(() => {
+                    statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+                    statusEl.style.background = '#d1fae5';
+                    statusEl.style.borderColor = '#10b981';
+                    statusEl.style.color = '#065f46';
+                }, 2000);
+            }
+        }
+        
+        function addSpace() {
+            recognizedText += ' ';
+            updateDisplay();
+            statusEl.textContent = 'Space added';
+            statusEl.style.background = '#dbeafe';
+            statusEl.style.borderColor = '#3b82f6';
+            statusEl.style.color = '#1e40af';
+            setTimeout(() => {
+                statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+                statusEl.style.background = '#d1fae5';
+                statusEl.style.borderColor = '#10b981';
+                statusEl.style.color = '#065f46';
+            }, 2000);
+        }
+        
+        function clearText() {
+            recognizedText = '';
+            updateDisplay();
+            statusEl.textContent = 'Text cleared';
+            statusEl.style.background = '#fef3c7';
+            statusEl.style.borderColor = '#f59e0b';
+            statusEl.style.color = '#92400e';
+            setTimeout(() => {
+                if (isRunning) {
+                    statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+                    statusEl.style.background = '#d1fae5';
+                    statusEl.style.borderColor = '#10b981';
+                    statusEl.style.color = '#065f46';
+                }
+            }, 2000);
+        }
+        
+        function updateDisplay() {
+            recognizedTextEl.textContent = recognizedText || '(empty)';
+        }
+        
+        updateDisplay();
+    </script>
+</body>
+</html>
