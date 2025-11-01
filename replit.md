@@ -211,7 +211,13 @@ Detailed instructions in `WINDOWS_SETUP.txt`.
 
 ## Recent Changes
 
-**November 1, 2025** (Latest Update - GPU & Recognition Improvements):
+**November 1, 2025** (Latest Update - Text-to-Speech & Full A-Z Support):
+- **"Speak All Text" Button Added** - New button that reads the entire recognized text aloud when clicked, not just letter-by-letter
+- **Verified A-Z Letter Coverage** - Confirmed all 26 letters (A-Z) are properly implemented in gesture classification
+- **Improved Text-to-Speech** - Enhanced speech synthesis with proper error handling and status feedback
+- **Better User Experience** - Clear UI feedback when speaking text, handles empty text gracefully
+
+**November 1, 2025** (Earlier - GPU & Recognition Improvements):
 - **GPU Acceleration Configured** - Environment variable set before MediaPipe import for GPU support (falls back to optimized CPU in environments without GPU hardware)
 - **Fixed Critical N Letter Bug** - Corrected N gesture logic to require ring/pinky curled (not extended), matching ASL standard
 - **Improved Finger Detection** - Enhanced finger extension detection with distance calculations for better accuracy across all A-Z letters
