@@ -355,6 +355,7 @@
                     <button class="btn-correct" onclick="confirmLetter()">✓ Correct</button>
                     <button class="btn-wrong" onclick="removeLast()">✗ Wrong</button>
                     <button class="btn-space" onclick="addSpace()">Add Space</button>
+                    <button class="btn-speak" onclick="speakAllText()" style="grid-column: span 2;">🔊 Speak All Text</button>
                 </div>
             </div>
             
@@ -528,6 +529,48 @@
                 utterance.pitch = 1;
                 utterance.volume = 1;
                 window.speechSynthesis.speak(utterance);
+            }
+        }
+        
+        function speakAllText() {
+            if ('speechSynthesis' in window) {
+                if (recognizedText && recognizedText.trim() !== '') {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(recognizedText);
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1;
+                    utterance.volume = 1;
+                    window.speechSynthesis.speak(utterance);
+                    
+                    statusEl.textContent = '🔊 Speaking text...';
+                    statusEl.style.background = '#e0e7ff';
+                    statusEl.style.borderColor = '#8b5cf6';
+                    statusEl.style.color = '#5b21b6';
+                    
+                    utterance.onend = () => {
+                        if (isRunning) {
+                            statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+                            statusEl.style.background = '#d1fae5';
+                            statusEl.style.borderColor = '#10b981';
+                            statusEl.style.color = '#065f46';
+                        }
+                    };
+                } else {
+                    statusEl.textContent = 'No text to speak!';
+                    statusEl.style.background = '#fef3c7';
+                    statusEl.style.borderColor = '#f59e0b';
+                    statusEl.style.color = '#92400e';
+                    setTimeout(() => {
+                        if (isRunning) {
+                            statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+                            statusEl.style.background = '#d1fae5';
+                            statusEl.style.borderColor = '#10b981';
+                            statusEl.style.color = '#065f46';
+                        }
+                    }, 2000);
+                }
+            } else {
+                alert('Sorry, your browser does not support text-to-speech!');
             }
         }
         
