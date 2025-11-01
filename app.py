@@ -1,3 +1,9 @@
+import os
+import logging
+
+# Enable GPU acceleration BEFORE importing mediapipe
+os.environ['MEDIAPIPE_DISABLE_GPU'] = '0'
+
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -6,18 +12,23 @@ from flask_socketio import SocketIO, emit
 import base64
 import math
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'asl-gesture-recognition'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
+
 hands = mp_hands.Hands(
     static_image_mode=False,
     max_num_hands=1,
-    min_detection_confidence=0.7,
-    min_tracking_confidence=0.7,
-    model_complexity=1
+    min_detection_confidence=0.5,  # Lower threshold for better detection
+    min_tracking_confidence=0.5,   # Lower threshold for smoother tracking
+    model_complexity=1             # 1 = balanced accuracy and speed
 )
 
 # Per-session storage
@@ -27,11 +38,20 @@ def calculate_distance(point1, point2):
     """Calculate Euclidean distance between two points"""
     return math.sqrt((point1.x - point2.x)**2 + (point1.y - point2.y)**2)
 
-def is_finger_extended(landmarks, finger_tip_id, finger_pip_id):
-    """Check if a finger is extended based on tip and pip positions"""
+def is_finger_extended(landmarks, finger_tip_id, finger_pip_id, finger_mcp_id):
+    """Check if a finger is extended based on tip, pip, and mcp positions"""
     tip = landmarks[finger_tip_id]
     pip = landmarks[finger_pip_id]
-    return tip.y < pip.y - 0.02
+    mcp = landmarks[finger_mcp_id]
+    
+    # Check if tip is above pip (extended)
+    vertical_extended = tip.y < pip.y - 0.015
+    
+    # Also check if the finger is straight (tip should be further from mcp than pip)
+    tip_mcp_dist = calculate_distance(tip, mcp)
+    pip_mcp_dist = calculate_distance(pip, mcp)
+    
+    return vertical_extended and tip_mcp_dist > pip_mcp_dist * 0.8
 
 def classify_asl_gesture(hand_landmarks):
     """
@@ -59,11 +79,11 @@ def classify_asl_gesture(hand_landmarks):
     wrist = landmarks[0]
     
     # Finger extension states
-    thumb_extended = is_finger_extended(landmarks, 4, 3)
-    index_extended = is_finger_extended(landmarks, 8, 6)
-    middle_extended = is_finger_extended(landmarks, 12, 10)
-    ring_extended = is_finger_extended(landmarks, 16, 14)
-    pinky_extended = is_finger_extended(landmarks, 20, 18)
+    thumb_extended = is_finger_extended(landmarks, 4, 3, 2)
+    index_extended = is_finger_extended(landmarks, 8, 6, 5)
+    middle_extended = is_finger_extended(landmarks, 12, 10, 9)
+    ring_extended = is_finger_extended(landmarks, 16, 14, 13)
+    pinky_extended = is_finger_extended(landmarks, 20, 18, 17)
     
     # === SPECIAL CONTROL GESTURES (check first) ===
     
@@ -131,9 +151,12 @@ def classify_asl_gesture(hand_landmarks):
         if fingers_together and horizontal:
             return 'H'
     
-    # N - Two fingers (index, middle) curled over thumb
-    if not index_extended and not middle_extended and ring_extended and pinky_extended:
-        if thumb_tip.y > middle_tip.y and thumb_tip.x < middle_tip.x:
+    # N - Two fingers (index, middle) curled over thumb, ring and pinky curled
+    if not index_extended and not middle_extended and not ring_extended and not pinky_extended:
+        # Check if index and middle are curled over thumb
+        thumb_covered = (index_tip.y > thumb_tip.y and middle_tip.y > thumb_tip.y and
+                        index_tip.x < thumb_mcp.x + 0.05 and middle_tip.x < thumb_mcp.x + 0.05)
+        if thumb_covered:
             return 'N'
     
     # === LETTERS WITH INDEX FINGER EXTENDED ===
@@ -262,7 +285,7 @@ def handle_connect():
     session_data[session_id] = {
         'recognized_text': ''
     }
-    print(f'Client connected: {session_id}')
+    logger.info(f'Client connected: {session_id}')
 
 @socketio.on('disconnect')
 def handle_disconnect():
@@ -270,7 +293,7 @@ def handle_disconnect():
     session_id = request.sid
     if session_id in session_data:
         del session_data[session_id]
-    print(f'Client disconnected: {session_id}')
+    logger.info(f'Client disconnected: {session_id}')
 
 @socketio.on('frame')
 def handle_frame(data):
@@ -279,58 +302,83 @@ def handle_frame(data):
     
     try:
         # Validate data
-        if not data or ',' not in data:
+        if not data or not isinstance(data, str) or ',' not in data:
+            logger.warning("Invalid frame data received")
             return
         
-        # Decode image
-        img_data = base64.b64decode(data.split(',')[1])
+        # Decode image with error handling
+        try:
+            img_data = base64.b64decode(data.split(',')[1])
+        except Exception as decode_error:
+            logger.error(f"Base64 decode error: {decode_error}")
+            return
+            
         np_arr = np.frombuffer(img_data, np.uint8)
         
         # Check if buffer is valid
         if np_arr.size == 0:
+            logger.warning("Empty numpy array from buffer")
             return
         
         frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
         
         # Check if frame decoded successfully
         if frame is None or frame.size == 0:
+            logger.error("Failed to decode frame with cv2")
             return
         
         # Process with MediaPipe
-        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = hands.process(rgb_frame)
+        try:
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = hands.process(rgb_frame)
+        except Exception as mp_error:
+            logger.error(f"MediaPipe processing error: {mp_error}")
+            return
         
         gesture = None
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
-                gesture = classify_asl_gesture(hand_landmarks)
+                try:
+                    gesture = classify_asl_gesture(hand_landmarks)
+                except Exception as classify_error:
+                    logger.error(f"Gesture classification error: {classify_error}", exc_info=True)
+                    gesture = None
                 
                 # Draw hand landmarks
-                mp_drawing.draw_landmarks(
-                    frame, 
-                    hand_landmarks, 
-                    mp_hands.HAND_CONNECTIONS,
-                    mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=2, circle_radius=2),
-                    mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=2)
-                )
+                try:
+                    mp_drawing.draw_landmarks(
+                        frame, 
+                        hand_landmarks, 
+                        mp_hands.HAND_CONNECTIONS,
+                        mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=2, circle_radius=2),
+                        mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=2)
+                    )
+                except Exception as draw_error:
+                    logger.error(f"Drawing error: {draw_error}")
         
         # Encode processed frame
-        success, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
-        if not success:
+        try:
+            success, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
+            if not success:
+                logger.error("Failed to encode frame")
+                return
+            
+            frame_data = base64.b64encode(buffer).decode('utf-8')
+        except Exception as encode_error:
+            logger.error(f"Frame encoding error: {encode_error}")
             return
         
-        frame_data = base64.b64encode(buffer).decode('utf-8')
-        
         # Send response
-        emit('response', {
-            'frame': f'data:image/jpeg;base64,{frame_data}',
-            'gesture': gesture
-        })
+        try:
+            emit('response', {
+                'frame': f'data:image/jpeg;base64,{frame_data}',
+                'gesture': gesture
+            })
+        except Exception as emit_error:
+            logger.error(f"Socket emit error: {emit_error}")
         
     except Exception as e:
-        print(f"Error processing frame: {e}")
-        import traceback
-        traceback.print_exc()
+        logger.error(f"Unexpected error processing frame: {e}", exc_info=True)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True, use_reloader=True, log_output=True)
