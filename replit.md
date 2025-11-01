@@ -34,7 +34,7 @@ project/
 │   └── index.html           # Web interface (HTML/CSS/JavaScript)
 ├── static/
 │   └── images/
-│       └── asl_alphabet_chart.jpg  # ASL alphabet reference guide (A-Z)
+│       └── asl_alphabet_guide.png  # ASL alphabet reference guide (A-Z)
 ├── requirements.txt         # Python dependencies
 ├── README.md                # Comprehensive documentation
 ├── WINDOWS_SETUP.txt        # Step-by-step Windows setup guide
@@ -74,12 +74,13 @@ project/
 ### Frontend (templates/index.html)
 
 **UI Components**:
-- Video feed display (640x480)
+- Three-column layout (camera, results, reference guide)
+- Video feed display (640x480) with real-time hand tracking
 - Current gesture indicator (large purple panel)
 - Recognized text accumulator
-- Control buttons (Start/Stop Camera, Clear Text, Speak Text, ASL Reference)
-- Text-to-speech functionality using Web Speech API
-- ASL alphabet reference modal with complete A-Z guide
+- Control buttons (Start/Stop Camera, Clear Text, Auto Speak toggle)
+- Letter-by-letter text-to-speech using Web Speech API
+- Permanent ASL alphabet reference sidebar (always visible)
 - Correction controls (Correct, Wrong, Add Space)
 - Status indicator with real-time feedback
 - Instructions panel
@@ -210,14 +211,16 @@ Detailed instructions in `WINDOWS_SETUP.txt`.
 
 ## Recent Changes
 
-**November 1, 2025**:
-- Added ASL alphabet reference guide modal with complete A-Z visual chart
-- Implemented text-to-speech functionality using Web Speech API
-- Added "Speak Text" button to read recognized text aloud
-- Added "ASL Reference" button to display alphabet guide
-- Created static/images/ directory for ASL reference assets
-- Enhanced UI with new buttons and modal styling
-- Improved accessibility with descriptive alt text
+**November 1, 2025** (Latest Update):
+- **Redesigned UI** with permanent 3-column layout
+- **Fixed frame processing errors** - Added validation to prevent OpenCV crashes
+- **Permanent ASL alphabet reference** - Always visible sidebar with user's custom A-Z guide
+- **Letter-by-letter text-to-speech** - Auto Speak toggle that speaks each letter as recognized
+- **Improved MediaPipe configuration** - Higher confidence thresholds (0.7) and model_complexity=1
+- **Better error handling** - Multiple validation checks for buffer and frame data
+- **Enhanced stability** - Optimized for 3+ minute continuous operation
+- Created static/images/ directory with ASL alphabet guide image
+- Improved accessibility and user experience
 
 **October 31, 2025**:
 - Complete restructure from React/TypeScript/Express to Python/HTML
