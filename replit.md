@@ -211,12 +211,23 @@ Detailed instructions in `WINDOWS_SETUP.txt`.
 
 ## Recent Changes
 
-**November 1, 2025** (Latest Update):
+**November 1, 2025** (Latest Update - GPU & Recognition Improvements):
+- **GPU Acceleration Configured** - Environment variable set before MediaPipe import for GPU support (falls back to optimized CPU in environments without GPU hardware)
+- **Fixed Critical N Letter Bug** - Corrected N gesture logic to require ring/pinky curled (not extended), matching ASL standard
+- **Improved Finger Detection** - Enhanced finger extension detection with distance calculations for better accuracy across all A-Z letters
+- **Lower Detection Thresholds** - Reduced confidence from 0.7 to 0.5 for better gesture recognition
+- **Proper Structured Logging** - Replaced all print statements with logger calls (info/warning/error with exc_info for stack traces)
+- **Comprehensive Error Handling** - Added try/except blocks throughout frame processing pipeline to prevent crashes
+- **Code Quality Improvements** - Fixed LSP errors and organized imports properly
+- **Documentation Updates** - Added performance notes to README about GPU/CPU usage
+- **Improved Stability** - Robust error handling ensures app doesn't crash on malformed frames
+
+**November 1, 2025** (Earlier):
 - **Redesigned UI** with permanent 3-column layout
 - **Fixed frame processing errors** - Added validation to prevent OpenCV crashes
 - **Permanent ASL alphabet reference** - Always visible sidebar with user's custom A-Z guide
 - **Letter-by-letter text-to-speech** - Auto Speak toggle that speaks each letter as recognized
-- **Improved MediaPipe configuration** - Higher confidence thresholds (0.7) and model_complexity=1
+- **Improved MediaPipe configuration** - model_complexity=1
 - **Better error handling** - Multiple validation checks for buffer and frame data
 - **Enhanced stability** - Optimized for 3+ minute continuous operation
 - Created static/images/ directory with ASL alphabet guide image
