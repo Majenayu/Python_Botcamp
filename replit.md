@@ -4,7 +4,7 @@
 
 A standalone Python application for real-time American Sign Language (ASL) gesture recognition. The system recognizes all letters A-Z plus special control gestures using MediaPipe hand tracking and geometric feature analysis. Designed to run on Windows with VS Code or any Python environment.
 
-**Last Updated**: October 31, 2025
+**Last Updated**: November 1, 2025
 
 ## User Preferences
 
@@ -32,6 +32,9 @@ project/
 ├── app.py                    # Main Python Flask server with gesture recognition
 ├── templates/
 │   └── index.html           # Web interface (HTML/CSS/JavaScript)
+├── static/
+│   └── images/
+│       └── asl_alphabet_chart.jpg  # ASL alphabet reference guide (A-Z)
 ├── requirements.txt         # Python dependencies
 ├── README.md                # Comprehensive documentation
 ├── WINDOWS_SETUP.txt        # Step-by-step Windows setup guide
@@ -74,7 +77,9 @@ project/
 - Video feed display (640x480)
 - Current gesture indicator (large purple panel)
 - Recognized text accumulator
-- Control buttons (Start/Stop Camera, Clear Text)
+- Control buttons (Start/Stop Camera, Clear Text, Speak Text, ASL Reference)
+- Text-to-speech functionality using Web Speech API
+- ASL alphabet reference modal with complete A-Z guide
 - Correction controls (Correct, Wrong, Add Space)
 - Status indicator with real-time feedback
 - Instructions panel
@@ -204,6 +209,15 @@ Detailed instructions in `WINDOWS_SETUP.txt`.
 - None currently planned - application meets all requirements
 
 ## Recent Changes
+
+**November 1, 2025**:
+- Added ASL alphabet reference guide modal with complete A-Z visual chart
+- Implemented text-to-speech functionality using Web Speech API
+- Added "Speak Text" button to read recognized text aloud
+- Added "ASL Reference" button to display alphabet guide
+- Created static/images/ directory for ASL reference assets
+- Enhanced UI with new buttons and modal styling
+- Improved accessibility with descriptive alt text
 
 **October 31, 2025**:
 - Complete restructure from React/TypeScript/Express to Python/HTML
