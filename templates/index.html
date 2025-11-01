@@ -16,15 +16,12 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             padding: 20px;
         }
         
         .container {
-            max-width: 1200px;
-            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -34,31 +31,31 @@
         header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 20px 30px;
             text-align: center;
         }
         
         h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2em;
+            margin-bottom: 5px;
         }
         
         .subtitle {
-            font-size: 1.1em;
+            font-size: 1em;
             opacity: 0.9;
         }
         
         .main-content {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            padding: 30px;
+            grid-template-columns: 1fr 1fr 400px;
+            gap: 20px;
+            padding: 20px;
         }
         
         .video-section {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
         
         .video-container {
@@ -83,16 +80,14 @@
         }
         
         .controls {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
         
         button {
-            flex: 1;
-            min-width: 150px;
-            padding: 15px 25px;
-            font-size: 1.1em;
+            padding: 12px 20px;
+            font-size: 1em;
             border: none;
             border-radius: 10px;
             cursor: pointer;
@@ -140,40 +135,30 @@
             transform: translateY(-2px);
         }
         
-        .btn-reference {
-            background: #06b6d4;
-            color: white;
-        }
-        
-        .btn-reference:hover {
-            background: #0891b2;
-            transform: translateY(-2px);
-        }
-        
         .info-section {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
         
         .gesture-display {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 15px;
             text-align: center;
         }
         
         .gesture-label {
-            font-size: 1.2em;
+            font-size: 1.1em;
             opacity: 0.9;
             margin-bottom: 10px;
         }
         
         .gesture-value {
-            font-size: 4em;
+            font-size: 3.5em;
             font-weight: bold;
-            min-height: 80px;
+            min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -181,22 +166,22 @@
         
         .text-display {
             background: #f3f4f6;
-            padding: 25px;
+            padding: 20px;
             border-radius: 15px;
             flex-grow: 1;
         }
         
         .text-label {
-            font-size: 1.2em;
+            font-size: 1.1em;
             font-weight: 600;
             color: #374151;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         
         .text-value {
-            font-size: 1.8em;
+            font-size: 1.5em;
             color: #1f2937;
-            min-height: 100px;
+            min-height: 80px;
             word-wrap: break-word;
             line-height: 1.5;
             font-family: 'Courier New', monospace;
@@ -205,14 +190,14 @@
         .correction-controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 10px;
         }
         
         .btn-correct {
             background: #10b981;
             color: white;
-            padding: 15px;
-            font-size: 1.2em;
+            padding: 12px;
+            font-size: 1.1em;
         }
         
         .btn-correct:hover {
@@ -222,8 +207,8 @@
         .btn-wrong {
             background: #ef4444;
             color: white;
-            padding: 15px;
-            font-size: 1.2em;
+            padding: 12px;
+            font-size: 1.1em;
         }
         
         .btn-wrong:hover {
@@ -233,8 +218,8 @@
         .btn-space {
             background: #3b82f6;
             color: white;
-            padding: 15px;
-            font-size: 1.2em;
+            padding: 12px;
+            font-size: 1.1em;
             grid-column: span 2;
         }
         
@@ -243,93 +228,74 @@
         }
         
         .status {
-            padding: 15px;
+            padding: 12px;
             background: #fef3c7;
             border-left: 4px solid #f59e0b;
             border-radius: 8px;
-            font-size: 1em;
+            font-size: 0.95em;
             color: #92400e;
         }
         
         .instructions {
             background: #e0e7ff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 15px;
-            margin-top: 20px;
+            margin-top: 10px;
         }
         
         .instructions h3 {
             color: #4338ca;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 1em;
         }
         
         .instructions ul {
             color: #4338ca;
             margin-left: 20px;
+            font-size: 0.9em;
         }
         
         .instructions li {
-            margin: 5px 0;
+            margin: 4px 0;
         }
         
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            overflow: auto;
+        .reference-section {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
         }
         
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 20px;
-            max-width: 900px;
-            position: relative;
-        }
-        
-        .close {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            font-size: 35px;
-            font-weight: bold;
-            color: #9ca3af;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        
-        .close:hover {
-            color: #374151;
+        .reference-section h3 {
+            color: #4338ca;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            text-align: center;
         }
         
         .reference-image {
             width: 100%;
             border-radius: 10px;
-            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
-        @media (max-width: 768px) {
+        .reference-note {
+            margin-top: 15px;
+            padding: 12px;
+            background: #e0e7ff;
+            border-radius: 8px;
+            color: #4338ca;
+            font-size: 0.9em;
+            text-align: center;
+        }
+        
+        @media (max-width: 1200px) {
             .main-content {
                 grid-template-columns: 1fr;
             }
             
             h1 {
-                font-size: 1.8em;
-            }
-            
-            .gesture-value {
-                font-size: 3em;
-            }
-            
-            .modal-content {
-                margin: 10% 10px;
-                padding: 20px;
+                font-size: 1.5em;
             }
         }
     </style>
@@ -342,6 +308,7 @@
         </header>
         
         <div class="main-content">
+            <!-- Left Column: Video -->
             <div class="video-section">
                 <div class="video-container">
                     <video id="video" autoplay playsinline></video>
@@ -349,11 +316,10 @@
                 </div>
                 
                 <div class="controls">
-                    <button class="btn-start" onclick="startCamera()">Start Camera</button>
-                    <button class="btn-stop" onclick="stopCamera()">Stop Camera</button>
-                    <button class="btn-clear" onclick="clearText()">Clear Text</button>
-                    <button class="btn-speak" onclick="speakText()">🔊 Speak Text</button>
-                    <button class="btn-reference" onclick="openReference()">📖 ASL Reference</button>
+                    <button class="btn-start" onclick="startCamera()">▶ Start Camera</button>
+                    <button class="btn-stop" onclick="stopCamera()">⏹ Stop Camera</button>
+                    <button class="btn-clear" onclick="clearText()">🗑 Clear Text</button>
+                    <button class="btn-speak" onclick="toggleAutoSpeak()">🔊 Auto Speak: <span id="autoSpeakStatus">OFF</span></button>
                 </div>
                 
                 <div class="status" id="status">
@@ -361,17 +327,19 @@
                 </div>
                 
                 <div class="instructions">
-                    <h3>Instructions:</h3>
+                    <h3>📋 Instructions:</h3>
                     <ul>
-                        <li>Show ASL gestures for letters A-Z in front of the camera</li>
-                        <li>Open hand (all fingers extended) = Add SPACE</li>
-                        <li>Thumbs Up 👍 = Confirm correct letter</li>
-                        <li>Thumbs Down 👎 = Remove last letter (wrong)</li>
-                        <li>Hold gesture steady for recognition</li>
+                        <li>Show ASL gestures for letters A-Z</li>
+                        <li>Open hand (all fingers) = Add SPACE</li>
+                        <li>Thumbs Up 👍 = Confirm letter</li>
+                        <li>Thumbs Down 👎 = Remove letter</li>
+                        <li>Hold gesture steady for ~1.5 seconds</li>
+                        <li>Enable Auto Speak to hear each letter</li>
                     </ul>
                 </div>
             </div>
             
+            <!-- Middle Column: Results -->
             <div class="info-section">
                 <div class="gesture-display">
                     <div class="gesture-label">Current Gesture</div>
@@ -380,7 +348,7 @@
                 
                 <div class="text-display">
                     <div class="text-label">Recognized Text</div>
-                    <div class="text-value" id="recognizedText"></div>
+                    <div class="text-value" id="recognizedText">(empty)</div>
                 </div>
                 
                 <div class="correction-controls">
@@ -389,18 +357,17 @@
                     <button class="btn-space" onclick="addSpace()">Add Space</button>
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <!-- ASL Reference Modal -->
-    <div id="referenceModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeReference()">&times;</span>
-            <h2 style="color: #4338ca; margin-bottom: 15px;">ASL Alphabet Reference Guide</h2>
-            <p style="color: #6b7280; margin-bottom: 20px;">Learn the hand postures for each letter A-Z</p>
-            <img src="{{ url_for('static', filename='images/asl_alphabet_chart.jpg') }}" 
-                 alt="Complete ASL Alphabet Chart showing hand signs for all 26 letters A through Z" 
-                 class="reference-image">
+            
+            <!-- Right Column: ASL Reference (Always Visible) -->
+            <div class="reference-section">
+                <h3>📖 ASL Alphabet Guide</h3>
+                <img src="{{ url_for('static', filename='images/asl_alphabet_guide.png') }}" 
+                     alt="Complete ASL Alphabet Chart A-Z" 
+                     class="reference-image">
+                <div class="reference-note">
+                    ℹ️ Reference guide for all 26 letters A-Z
+                </div>
+            </div>
         </div>
     </div>
     
@@ -418,12 +385,16 @@
         let recognizedText = '';
         let lastGesture = null;
         let gestureHoldCount = 0;
+        let autoSpeak = false;
         const HOLD_THRESHOLD = 15;
         
         async function startCamera() {
             try {
                 stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { width: 640, height: 480 } 
+                    video: { 
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
                 });
                 video.srcObject = stream;
                 isRunning = true;
@@ -448,6 +419,7 @@
             }
             video.srcObject = null;
             processedFrame.style.display = 'none';
+            video.style.display = 'block';
             statusEl.textContent = 'Camera stopped';
             statusEl.style.background = '#fef3c7';
             statusEl.style.borderColor = '#f59e0b';
@@ -457,14 +429,19 @@
         function processFrames() {
             if (!isRunning) return;
             
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0);
-            
-            const dataURL = canvas.toDataURL('image/jpeg', 0.8);
-            socket.emit('frame', dataURL);
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                if (canvas.width > 0 && canvas.height > 0) {
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(video, 0, 0);
+                    
+                    const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+                    socket.emit('frame', dataURL);
+                }
+            }
             
             setTimeout(processFrames, 100);
         }
@@ -501,6 +478,12 @@
                           currentGesture !== 'THUMBS_DOWN') {
                     recognizedText += currentGesture;
                     updateDisplay();
+                    
+                    // Speak letter if auto-speak is enabled
+                    if (autoSpeak) {
+                        speakLetter(currentGesture);
+                    }
+                    
                     gestureHoldCount = 0;
                 }
                 
@@ -520,13 +503,43 @@
             }
         });
         
+        function toggleAutoSpeak() {
+            autoSpeak = !autoSpeak;
+            document.getElementById('autoSpeakStatus').textContent = autoSpeak ? 'ON' : 'OFF';
+            
+            if (autoSpeak) {
+                statusEl.textContent = '🔊 Auto-speak enabled - Each letter will be spoken';
+                statusEl.style.background = '#e0e7ff';
+                statusEl.style.borderColor = '#8b5cf6';
+                statusEl.style.color = '#5b21b6';
+            } else {
+                statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+                statusEl.style.background = '#d1fae5';
+                statusEl.style.borderColor = '#10b981';
+                statusEl.style.color = '#065f46';
+            }
+        }
+        
+        function speakLetter(letter) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(letter);
+                utterance.rate = 1.0;
+                utterance.pitch = 1;
+                utterance.volume = 1;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+        
         function confirmLetter() {
             statusEl.textContent = '✓ Letter confirmed!';
             statusEl.style.background = '#d1fae5';
             statusEl.style.borderColor = '#10b981';
             statusEl.style.color = '#065f46';
             setTimeout(() => {
-                statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+                if (isRunning) {
+                    statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+                }
             }, 2000);
         }
         
@@ -539,10 +552,12 @@
                 statusEl.style.borderColor = '#ef4444';
                 statusEl.style.color = '#991b1b';
                 setTimeout(() => {
-                    statusEl.textContent = 'Camera active - Show gestures to recognize letters';
-                    statusEl.style.background = '#d1fae5';
-                    statusEl.style.borderColor = '#10b981';
-                    statusEl.style.color = '#065f46';
+                    if (isRunning) {
+                        statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+                        statusEl.style.background = '#d1fae5';
+                        statusEl.style.borderColor = '#10b981';
+                        statusEl.style.color = '#065f46';
+                    }
                 }, 2000);
             }
         }
@@ -555,10 +570,12 @@
             statusEl.style.borderColor = '#3b82f6';
             statusEl.style.color = '#1e40af';
             setTimeout(() => {
-                statusEl.textContent = 'Camera active - Show gestures to recognize letters';
-                statusEl.style.background = '#d1fae5';
-                statusEl.style.borderColor = '#10b981';
-                statusEl.style.color = '#065f46';
+                if (isRunning) {
+                    statusEl.textContent = 'Camera active - Show gestures to recognize letters';
+                    statusEl.style.background = '#d1fae5';
+                    statusEl.style.borderColor = '#10b981';
+                    statusEl.style.color = '#065f46';
+                }
             }, 2000);
         }
         
@@ -581,77 +598,6 @@
         
         function updateDisplay() {
             recognizedTextEl.textContent = recognizedText || '(empty)';
-        }
-        
-        function speakText() {
-            if (!recognizedText) {
-                statusEl.textContent = 'No text to speak';
-                statusEl.style.background = '#fee2e2';
-                statusEl.style.borderColor = '#ef4444';
-                statusEl.style.color = '#991b1b';
-                setTimeout(() => {
-                    if (isRunning) {
-                        statusEl.textContent = 'Camera active - Show gestures to recognize letters';
-                        statusEl.style.background = '#d1fae5';
-                        statusEl.style.borderColor = '#10b981';
-                        statusEl.style.color = '#065f46';
-                    } else {
-                        statusEl.textContent = 'Click "Start Camera" to begin gesture recognition';
-                        statusEl.style.background = '#fef3c7';
-                        statusEl.style.borderColor = '#f59e0b';
-                        statusEl.style.color = '#92400e';
-                    }
-                }, 2000);
-                return;
-            }
-            
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(recognizedText);
-                utterance.rate = 0.9;
-                utterance.pitch = 1;
-                utterance.volume = 1;
-                
-                utterance.onstart = () => {
-                    statusEl.textContent = '🔊 Speaking...';
-                    statusEl.style.background = '#e0e7ff';
-                    statusEl.style.borderColor = '#8b5cf6';
-                    statusEl.style.color = '#5b21b6';
-                };
-                
-                utterance.onend = () => {
-                    if (isRunning) {
-                        statusEl.textContent = 'Camera active - Show gestures to recognize letters';
-                        statusEl.style.background = '#d1fae5';
-                        statusEl.style.borderColor = '#10b981';
-                        statusEl.style.color = '#065f46';
-                    } else {
-                        statusEl.textContent = 'Click "Start Camera" to begin gesture recognition';
-                        statusEl.style.background = '#fef3c7';
-                        statusEl.style.borderColor = '#f59e0b';
-                        statusEl.style.color = '#92400e';
-                    }
-                };
-                
-                window.speechSynthesis.speak(utterance);
-            } else {
-                alert('Text-to-speech is not supported in your browser');
-            }
-        }
-        
-        function openReference() {
-            document.getElementById('referenceModal').style.display = 'block';
-        }
-        
-        function closeReference() {
-            document.getElementById('referenceModal').style.display = 'none';
-        }
-        
-        window.onclick = function(event) {
-            const modal = document.getElementById('referenceModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
         }
         
         updateDisplay();

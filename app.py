@@ -15,8 +15,9 @@ mp_drawing = mp.solutions.drawing_utils
 hands = mp_hands.Hands(
     static_image_mode=False,
     max_num_hands=1,
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5
+    min_detection_confidence=0.7,
+    min_tracking_confidence=0.7,
+    model_complexity=1
 )
 
 # Per-session storage
@@ -277,10 +278,23 @@ def handle_frame(data):
     session_id = request.sid
     
     try:
+        # Validate data
+        if not data or ',' not in data:
+            return
+        
         # Decode image
         img_data = base64.b64decode(data.split(',')[1])
         np_arr = np.frombuffer(img_data, np.uint8)
+        
+        # Check if buffer is valid
+        if np_arr.size == 0:
+            return
+        
         frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        
+        # Check if frame decoded successfully
+        if frame is None or frame.size == 0:
+            return
         
         # Process with MediaPipe
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -301,7 +315,10 @@ def handle_frame(data):
                 )
         
         # Encode processed frame
-        _, buffer = cv2.imencode('.jpg', frame)
+        success, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
+        if not success:
+            return
+        
         frame_data = base64.b64encode(buffer).decode('utf-8')
         
         # Send response
@@ -312,11 +329,8 @@ def handle_frame(data):
         
     except Exception as e:
         print(f"Error processing frame: {e}")
-        emit('response', {
-            'frame': None,
-            'gesture': None,
-            'error': str(e)
-        })
+        import traceback
+        traceback.print_exc()
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
