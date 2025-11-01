@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'asl-gesture-recognition'
+app.secret_key = os.environ.get("SESSION_SECRET")
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 mp_hands = mp.solutions.hands
@@ -26,9 +26,9 @@ mp_drawing = mp.solutions.drawing_utils
 hands = mp_hands.Hands(
     static_image_mode=False,
     max_num_hands=1,
-    min_detection_confidence=0.5,  # Lower threshold for better detection
-    min_tracking_confidence=0.5,   # Lower threshold for smoother tracking
-    model_complexity=1             # 1 = balanced accuracy and speed
+    min_detection_confidence=0.45,  # Moderate threshold to reduce false positives
+    min_tracking_confidence=0.45,   # Moderate threshold for reliable tracking
+    model_complexity=1              # 1 = balanced accuracy and speed
 )
 
 # Per-session storage
@@ -44,14 +44,15 @@ def is_finger_extended(landmarks, finger_tip_id, finger_pip_id, finger_mcp_id):
     pip = landmarks[finger_pip_id]
     mcp = landmarks[finger_mcp_id]
     
-    # Check if tip is above pip (extended)
-    vertical_extended = tip.y < pip.y - 0.015
+    # Check if tip is above pip (extended) - balanced threshold
+    vertical_extended = tip.y < pip.y - 0.012
     
     # Also check if the finger is straight (tip should be further from mcp than pip)
     tip_mcp_dist = calculate_distance(tip, mcp)
     pip_mcp_dist = calculate_distance(pip, mcp)
     
-    return vertical_extended and tip_mcp_dist > pip_mcp_dist * 0.8
+    # Balanced extension check
+    return vertical_extended and tip_mcp_dist > pip_mcp_dist * 0.78
 
 def classify_asl_gesture(hand_landmarks):
     """
@@ -105,8 +106,8 @@ def classify_asl_gesture(hand_landmarks):
     
     # B - All four fingers up, close together, thumb tucked
     if index_extended and middle_extended and ring_extended and pinky_extended and not thumb_extended:
-        fingers_close = (calculate_distance(index_tip, middle_tip) < 0.05 and
-                        calculate_distance(middle_tip, ring_tip) < 0.05)
+        fingers_close = (calculate_distance(index_tip, middle_tip) < 0.055 and
+                        calculate_distance(middle_tip, ring_tip) < 0.055)
         if fingers_close:
             return 'B'
     
@@ -118,12 +119,12 @@ def classify_asl_gesture(hand_landmarks):
     # F - Index curled to thumb, middle/ring/pinky up
     if not index_extended and middle_extended and ring_extended and pinky_extended:
         thumb_index_dist = calculate_distance(thumb_tip, index_tip)
-        if thumb_index_dist < 0.06:
+        if thumb_index_dist < 0.07:
             return 'F'
     
     # R - Index and middle crossed
     if index_extended and middle_extended and not ring_extended and not pinky_extended:
-        fingers_crossed = abs(index_tip.x - middle_tip.x) < 0.03
+        fingers_crossed = abs(index_tip.x - middle_tip.x) < 0.035
         if fingers_crossed and not thumb_extended:
             return 'R'
     
@@ -134,13 +135,13 @@ def classify_asl_gesture(hand_landmarks):
     
     # V - Index and middle apart (peace sign)
     if index_extended and middle_extended and not ring_extended and not pinky_extended:
-        fingers_apart = calculate_distance(index_tip, middle_tip) > 0.08
+        fingers_apart = calculate_distance(index_tip, middle_tip) > 0.07
         if fingers_apart and not thumb_extended:
             return 'V'
     
     # U - Index and middle together pointing up
     if index_extended and middle_extended and not ring_extended and not pinky_extended:
-        fingers_together = calculate_distance(index_tip, middle_tip) < 0.03
+        fingers_together = calculate_distance(index_tip, middle_tip) < 0.035
         if fingers_together and not thumb_extended:
             return 'U'
     
@@ -164,13 +165,13 @@ def classify_asl_gesture(hand_landmarks):
     # D - Index up, thumb touching middle finger
     if index_extended and not middle_extended and not ring_extended and not pinky_extended:
         thumb_middle_dist = calculate_distance(thumb_tip, middle_tip)
-        if thumb_middle_dist < 0.06 and thumb_extended:
+        if thumb_middle_dist < 0.07 and thumb_extended:
             return 'D'
     
     # L - Index and thumb forming L shape
     if index_extended and thumb_extended and not middle_extended and not ring_extended and not pinky_extended:
-        l_shape = abs(index_tip.x - thumb_tip.x) > 0.08
-        perpendicular = abs(index_tip.y - thumb_tip.y) > 0.08
+        l_shape = abs(index_tip.x - thumb_tip.x) > 0.07
+        perpendicular = abs(index_tip.y - thumb_tip.y) > 0.07
         if l_shape and perpendicular:
             return 'L'
     
@@ -217,7 +218,7 @@ def classify_asl_gesture(hand_landmarks):
     
     # O - Thumb and index forming circle
     thumb_index_dist = calculate_distance(thumb_tip, index_tip)
-    if thumb_index_dist < 0.05 and not middle_extended and not ring_extended and not pinky_extended:
+    if thumb_index_dist < 0.055 and not middle_extended and not ring_extended and not pinky_extended:
         return 'O'
     
     # E - All fingers tightly curled

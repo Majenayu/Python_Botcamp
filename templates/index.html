@@ -187,6 +187,27 @@
             font-family: 'Courier New', monospace;
         }
         
+        #recognizedText {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            font-size: 1.5em;
+            color: #1f2937;
+            background: white;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+        
+        #recognizedText:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
         .correction-controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -347,8 +368,8 @@
                 </div>
                 
                 <div class="text-display">
-                    <div class="text-label">Recognized Text</div>
-                    <div class="text-value" id="recognizedText">(empty)</div>
+                    <div class="text-label">Recognized Text (editable - type or use gestures)</div>
+                    <textarea id="recognizedText" placeholder="Show gestures or type here...">(empty)</textarea>
                 </div>
                 
                 <div class="correction-controls">
@@ -388,6 +409,11 @@
         let gestureHoldCount = 0;
         let autoSpeak = false;
         const HOLD_THRESHOLD = 15;
+        
+        // Sync textarea value with recognizedText variable
+        recognizedTextEl.addEventListener('input', () => {
+            recognizedText = recognizedTextEl.value;
+        });
         
         async function startCamera() {
             try {
@@ -640,10 +666,12 @@
         }
         
         function updateDisplay() {
-            recognizedTextEl.textContent = recognizedText || '(empty)';
+            recognizedTextEl.value = recognizedText;
         }
         
-        updateDisplay();
+        // Initialize with empty value
+        recognizedTextEl.value = '';
+        recognizedText = '';
     </script>
 </body>
 </html>
